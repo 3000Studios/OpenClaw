@@ -14,6 +14,22 @@ OpenClaw is a self-hosted AI gateway that connects your local Ollama models to e
 
 ---
 
+## ⚠️ Windows Users — Read This First
+
+Native Windows has known gateway port-binding issues. **WSL2 is the recommended path** for stable operation.
+
+| | Native Windows | WSL2 |
+|---|---|---|
+| Gateway stability | ⚠️ Unreliable | ✅ Stable |
+| Always-on/headless | ❌ | ✅ |
+| Recommended | ❌ | ✅ |
+
+👉 **[Full WSL2 Setup Guide →](./WSL2-SETUP.md)**
+
+If you want to run on native Windows without WSL2, use `openclaw gateway run` (not `openclaw gateway start`) to bypass the daemon and avoid port binding issues.
+
+---
+
 ## ⚡ Quick Install (PowerShell as Administrator)
 
 ### Step 1 — Clean any broken install
@@ -42,7 +58,7 @@ npm install -g openclaw@latest
 
 ```powershell
 openclaw onboard --install-daemon
-openclaw gateway start
+openclaw gateway run
 ```
 
 ### Step 4 — Verify locally
@@ -76,7 +92,7 @@ feishu:
 Then restart the gateway:
 
 ```powershell
-openclaw gateway start
+openclaw gateway run
 ```
 
 ---
@@ -138,13 +154,8 @@ Set agent model in OpenClaw dashboard: `ollama/llama3.2:3b`
 # Check what's on the port
 netstat -ano | findstr :18789
 
-# Start with debug output
-openclaw gateway start --debug
-```
-
-If another process owns the port, kill it:
-```powershell
-taskkill /F /PID <PID_NUMBER>
+# Use gateway run instead of start
+openclaw gateway run
 ```
 
 ### NPM permission errors (EPERM)
@@ -155,22 +166,9 @@ Run PowerShell as Administrator. Windows file handles get stuck — the clean in
 
 Usually caused by a missing module (`@larksuiteoapi/node-sdk`). Fix: disable the Feishu/ZaloUser plugin in config (see above).
 
-### Gateway process exists but not accepting connections
+### Full troubleshooting guide
 
-The process is running but not binding to the port. Run with `--debug` to see the startup error:
-
-```powershell
-openclaw gateway start --debug
-```
-
-### Reinstall loop / unstable install
-
-1. Kill all node processes
-2. Delete openclaw from `$env:APPDATA
-pm
-ode_modules`
-3. Run `npm cache clean --force`
-4. Reinstall fresh
+See [TROUBLESHOOTING.md](./TROUBLESHOOTING.md)
 
 ---
 
@@ -179,9 +177,10 @@ ode_modules`
 ```
 OpenClaw/
 ├── README.md              # This file
+├── WSL2-SETUP.md          # Full WSL2 setup guide (recommended)
+├── TROUBLESHOOTING.md     # Extended troubleshooting guide
 ├── config.template.yaml   # Config template (copy to config.yaml)
-├── setup.ps1              # Automated setup script
-└── TROUBLESHOOTING.md     # Extended troubleshooting guide
+└── setup.ps1              # Automated setup script
 ```
 
 ---
@@ -190,5 +189,6 @@ OpenClaw/
 
 - Ollama: https://ollama.com
 - Cloudflare Tunnel docs: https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/
+- WSL2 docs: https://learn.microsoft.com/windows/wsl/install
 - OpenClaw dashboard (local): http://127.0.0.1:18789/
 - OpenClaw dashboard (remote): https://openclaw.myappai.net
